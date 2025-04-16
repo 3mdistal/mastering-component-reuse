@@ -2,14 +2,13 @@
 	import CardBasic from '$lib/components/patterns/basic-composition/CardBasic.svelte';
 	import CardFlexible from '$lib/components/patterns/flexible-composition/CardFlexible.svelte';
 
-	// Demo component for the basic card's footer prop
-	import BasicFooter from './_BasicFooter.svelte';
-
 	// Data for examples
 	const basicCardData = {
 		header: 'Basic Card Header',
 		body: 'This is the main content for the basic card. It uses the default slot.',
-		footerComponent: BasicFooter
+		footerTitle: 'Action Required',
+		footerBody: 'Please review the details before proceeding.',
+		footerAction: 'Confirm Setup'
 	};
 
 	const flexibleCardData = {
@@ -28,7 +27,12 @@
 		<div class="grid-container">
 			<div>
 				<h3 class="example-title">Full Example</h3>
-				<CardBasic headerText={basicCardData.header} footerComponent={BasicFooter}>
+				<CardBasic
+					headerText={basicCardData.header}
+					footerTitle={basicCardData.footerTitle}
+					footerBody={basicCardData.footerBody}
+					footerActionText={basicCardData.footerAction}
+				>
 					<p>{basicCardData.body}</p>
 				</CardBasic>
 			</div>
@@ -48,16 +52,15 @@
 			</div>
 
 			<div>
-				<h3 class="example-title">Challenge: Adding Custom Footer Markup</h3>
-				<CardBasic headerText="Needs Custom Footer">
+				<h3 class="example-title">Challenge: Customizing the Footer</h3>
+				<CardBasic headerText="Needs Different Footer">
 					<p>
-						To put complex markup or logic in the footer here, we had to pass a whole <code
-							>{`<svelte:component>`}</code
-						>
-						(now deprecated, replaced by direct component rendering in CardBasic). See
-						<code>_BasicFooter.svelte</code>.
+						To put different content or structure in the footer (e.g., two buttons, an icon), we
+						would need to add more specific props to <code>CardBasic.svelte</code> (like
+						<code>footerButton2Text</code>, <code>footerIcon</code>, etc.), leading to prop
+						explosion.
 					</p>
-					<!-- Cannot easily add inline footer markup here -->
+					<!-- Cannot easily customize footer structure here beyond the predefined props -->
 				</CardBasic>
 			</div>
 		</div>
@@ -123,44 +126,42 @@
 <style>
 	.page-container {
 		padding: 2rem;
-		/* space-y-12 replaced by margin on sections */
 	}
 	.page-title {
-		font-size: 1.875rem; /* text-3xl */
-		font-weight: 700; /* font-bold */
-		margin-bottom: 2rem; /* mb-8 */
+		font-size: 1.875rem;
+		font-weight: 700;
+		margin-bottom: 2rem;
 	}
 	.example-section {
-		margin-top: 3rem; /* space-y-12 */
+		margin-top: 3rem;
 	}
 	.example-section:first-child {
 		margin-top: 0;
 	}
 	.section-title {
-		font-size: 1.5rem; /* text-2xl */
-		font-weight: 600; /* font-semibold */
-		margin-bottom: 1rem; /* mb-4 */
-		border-bottom: 1px solid #e5e7eb; /* border-b */
-		padding-bottom: 0.5rem; /* pb-2 */
+		font-size: 1.5rem;
+		font-weight: 600;
+		margin-bottom: 1rem;
+		border-bottom: 1px solid #e5e7eb;
+		padding-bottom: 0.5rem;
 	}
 	.grid-container {
 		display: grid;
-		grid-template-columns: repeat(1, minmax(0, 1fr)); /* grid-cols-1 */
-		gap: 1.5rem; /* gap-6 */
+		grid-template-columns: repeat(1, minmax(0, 1fr));
+		gap: 1.5rem;
 	}
 	@media (min-width: 768px) {
-		/* md: */
 		.grid-container {
-			grid-template-columns: repeat(2, minmax(0, 1fr)); /* md:grid-cols-2 */
+			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 	}
 	.example-title {
-		font-size: 1.25rem; /* text-xl */
-		margin-bottom: 0.5rem; /* mb-2 */
+		font-size: 1.25rem;
+		margin-bottom: 0.5rem;
 	}
 	code {
 		font-family: monospace;
-		background-color: #f3f4f6; /* bg-gray-100 or 200 approx */
+		background-color: #f3f4f6;
 		padding: 0.1rem 0.25rem;
 		border-radius: 0.25rem;
 		font-size: 0.9em;
@@ -177,15 +178,15 @@
 		transition: background-color 0.2s ease;
 	}
 	.button-success {
-		background-color: #10b981; /* bg-green-500 */
+		background-color: #10b981;
 	}
 	.button-success:hover {
-		background-color: #059669; /* hover:bg-green-600 */
+		background-color: #059669;
 	}
 	.button-danger {
-		background-color: #ef4444; /* bg-red-500 */
+		background-color: #ef4444;
 	}
 	.button-danger:hover {
-		background-color: #dc2626; /* hover:bg-red-600 */
+		background-color: #dc2626;
 	}
 </style>

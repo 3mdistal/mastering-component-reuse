@@ -1,13 +1,15 @@
 <script lang="ts">
-	import type { Snippet, Component } from 'svelte';
+	import type { Snippet } from 'svelte';
 
 	type Props = {
 		headerText?: string;
-		footerComponent?: Component;
+		footerTitle?: string;
+		footerBody?: string;
+		footerActionText?: string;
 		children: Snippet;
 	};
 
-	let { headerText, footerComponent, children }: Props = $props();
+	let { headerText, footerTitle, footerBody, footerActionText, children }: Props = $props();
 </script>
 
 <div class={`card-basic`}>
@@ -21,12 +23,19 @@
 		{@render children()}
 	</div>
 
-	{#if footerComponent}
+	{#if footerTitle || footerBody || footerActionText}
 		<footer class="card-footer">
-			<!-- Using svelte:component is necessary here to render the passed Component prop.
-			 Note: Svelte 5 issues a deprecation warning, encouraging snippet-based patterns 
-			 (like in CardFlexible) for better flexibility and type safety where possible. -->
-			<svelte:component this={footerComponent} />
+			{#if footerTitle}
+				<h4 class="card-footer-title">{footerTitle}</h4>
+			{/if}
+			{#if footerBody}
+				<p class="card-footer-body">{footerBody}</p>
+			{/if}
+			{#if footerActionText}
+				<div class="card-footer-action">
+					<button class="button button-primary">{footerActionText}</button>
+				</div>
+			{/if}
 		</footer>
 	{/if}
 </div>
@@ -59,5 +68,34 @@
 		border-top: 1px solid #e5e7eb;
 		padding-top: 8px;
 		margin-top: 8px;
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+	.card-footer-title {
+		font-weight: 600;
+	}
+	.card-footer-body {
+		font-size: 0.9rem;
+		color: #4b5563;
+	}
+	.card-footer-action {
+		margin-top: 4px;
+		align-self: flex-end;
+	}
+	.button {
+		padding: 0.25rem 0.75rem;
+		border-radius: 0.25rem;
+		font-size: 0.875rem;
+		cursor: pointer;
+		transition: background-color 0.2s ease;
+	}
+	.button-primary {
+		background-color: #3b82f6;
+		color: white;
+		border: 1px solid transparent;
+	}
+	.button-primary:hover {
+		background-color: #2563eb;
 	}
 </style>
