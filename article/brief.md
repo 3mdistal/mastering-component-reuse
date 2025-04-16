@@ -64,13 +64,13 @@ This article explores the nuanced spectrum between inheritance and composition i
 
 - **Definition & Analogy:** Define this common pattern: `ComponentA` imports and renders `ComponentB`. `Form` _has-a_ `Button`. This _is_ technically composition.
 - **Mechanism:** `import Button from './Button'; <Button {...props} />`.
-- **Strengths:** Simple, explicit dependency, easy to understand initially, **type safety *via props*** (TypeScript checks if `Button` receives the props it expects).
+- **Strengths:** Simple, explicit dependency, easy to understand initially, **type safety _via props_** (TypeScript checks if `Button` receives the props it expects).
 - **Weaknesses (The Core Argument):**
   - **Compositional Tight Coupling:** `ComponentA` is hardcoded to use that _specific_ `ComponentB` implementation.
   - **Rigidity:** Difficult for the _consumer_ of `ComponentA` to swap out `ComponentB` for `ComponentC` without modifying `ComponentA` or adding complex conditional logic inside it.
-  - **Limited Reusability:** `ComponentA` is less reusable because it makes assumptions about its children.
+  - **Limited Reusability:** Only suitable for use cases that exactly match its predefined structure.
   - **Example - Card Component:** A `CardBasic` component might accept specific props like `headerText`, `footerTitle`, `footerActionText`. To customize the footer beyond this predefined structure (e.g., add an icon, two buttons), the component itself must be modified to accept even more props, leading to "prop explosion".
-  - **Example - Data Fetching:** A common attempt to improve on duplicating fetch logic is creating a wrapper like `FetchDataBasic`. While it centralizes fetching, passing a required `displayComponent` prop still leads to rigidity. The wrapper dictates the loading/error UI and imposes a strict prop contract (e.g., `data` prop) on the display component, hindering reuse with different UIs or data structures.
+  - **Example - Data Fetching:** A common attempt to improve on duplicating fetch logic is creating a wrapper like `FetchDataBasic`. It dictates loading/error UI, imports specific display components internally (e.g., `UserListComponent`), and uses a prop like `displayType` to choose between them. Adding support for a new data type (e.g., posts) requires modifying `FetchDataBasic` to import the new display component and add conditional logic.
   - **This is the "Middle Ground":** Explain why this often feels less flexible than the promise of "composition."
 
 ### Section 4: Pattern 3: Flexible Composition via Slots/Snippets ("Has-A", Advanced)
@@ -89,11 +89,8 @@ This article explores the nuanced spectrum between inheritance and composition i
 - **The Key Insight:** Explain snippets behave like _typed function parameters for markup chunks_.
 - **Analogy:** Compare to "Render Props" pattern – parent passes data down, consumer provides the rendering logic using that data.
 - **Type Safety Mechanism:** Explain `propName: Snippet<[ParamType1, ParamType2]>` in the parent component's props definition. The parent dictates the _contract_ (required parameters and their types) for the snippet.
-- **Code Example:** Use the `Form` example:
-  - `Form.svelte` requires `actions: Snippet<[{ isSubmitting: boolean }]>`.
-  - `Form.svelte` uses `{@render actions({ isSubmitting })}` to pass the state down.
-  - `Page.svelte` provides `{#snippet actions({ isSubmitting })} ... {/snippet}`.
-- **Illustrate Type Errors:** Show commented-out examples in `Page.svelte` where providing a snippet with the wrong signature (no params, wrong param names/types) causes TypeScript errors _on the `<Form>` usage_.
+- **Code Example:** Use the `FetchDataFlexible` example, showing how snippets (`loading`, `error`, `data`) allow the consumer to define the UI, and how generics (`FetchDataFlexible<User[]>`) ensure type safety for the `data` snippet.
+- **Illustrate Type Errors:** Show commented-out examples in `Page.svelte` where providing a snippet with the wrong signature (e.g., expecting `data` prop but not providing it, or vice-versa) causes TypeScript errors on the `<FetchDataFlexible>` usage.
 - **Default Snippet Content:** Mention how providing default content within the snippet definition in the parent (`{#snippet name(arg)} DEFAULT MARKUP {/snippet}`) offers the best of both worlds (easy default, customizable).
 - **(Optional) Contrast:** Briefly contrast with Svelte 4 slots to highlight the improved explicitness and type safety of Snippets.
 

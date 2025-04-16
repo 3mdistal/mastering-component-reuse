@@ -12,7 +12,7 @@
 	let { headerText, footerTitle, footerBody, footerActionText, children }: Props = $props();
 </script>
 
-<div class={`card-basic`}>
+<div class="card-basic">
 	{#if headerText}
 		<header class="card-header">
 			<h3 class="card-header-title">{headerText}</h3>

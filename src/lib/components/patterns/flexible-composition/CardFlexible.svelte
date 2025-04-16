@@ -10,7 +10,7 @@
 	let { children, header, footer }: Props = $props();
 </script>
 
-<div class={`card-flexible`}>
+<div class="card-flexible">
 	{#if header}
 		<header class="card-header">
 			{@render header()}

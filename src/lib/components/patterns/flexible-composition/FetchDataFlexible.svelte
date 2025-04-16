@@ -37,9 +37,12 @@
 					data = fetchedData;
 					error = null;
 				}
-			} catch (e: any) {
-				if (e.name !== 'AbortError' && currentUrl === url) {
-					error = e instanceof Error ? e : new Error('Fetch failed');
+			} catch (e: unknown) {
+				if (e instanceof Error && e.name !== 'AbortError' && currentUrl === url) {
+					error = e;
+					data = null;
+				} else if (currentUrl === url) {
+					error = new Error('An unknown fetch error occurred');
 					data = null;
 				}
 			} finally {

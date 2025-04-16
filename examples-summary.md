@@ -7,6 +7,7 @@ This document summarizes the Svelte 5 code examples created to accompany the art
 This example demonstrates the difference between basic (props-based) and flexible (snippet-based) composition for a common UI element like a Card.
 
 **Location:**
+
 - Components: `src/lib/components/patterns/*/Card*.svelte`
 - Demo Page: `src/routes/examples/card/+page.svelte`
 
@@ -15,18 +16,18 @@ This example demonstrates the difference between basic (props-based) and flexibl
 - **Pattern:** Composition via Props.
 - **Implementation:** Defines specific props for optional content sections (`headerText`, `footerTitle`, `footerBody`, `footerActionText`). The internal structure, especially for the footer, is rigidly defined within the component.
 - **Demonstrates:**
-    - **Rigidity:** The consumer cannot easily change the footer's structure (e.g., add a second button, an icon) without modifying `CardBasic` itself.
-    - **Prop Explosion:** Customizing variations requires adding more and more props to the component, making its API complex.
-    - **Limited Reusability:** Only suitable for use cases that exactly match its predefined structure.
+  - **Rigidity:** The consumer cannot easily change the footer's structure (e.g., add a second button, an icon) without modifying `CardBasic` itself.
+  - **Prop Explosion:** Customizing variations requires adding more and more props to the component, making its API complex.
+  - **Limited Reusability:** Only suitable for use cases that exactly match its predefined structure.
 
 ### `CardFlexible.svelte` (Flexible Composition)
 
 - **Pattern:** Composition via Snippets.
 - **Implementation:** Defines optional named snippets (`header`, `footer`) and uses the default `children` snippet. The component provides the outer shell (styling, layout) but delegates the rendering of the header, footer, and body entirely to the consumer.
 - **Demonstrates:**
-    - **Flexibility:** The consumer provides the exact markup needed for the header and footer directly within the `<CardFlexible>` tags using `{#snippet ...}`.
-    - **Inversion of Control:** The *consumer*, not the card component, controls the content and structure of the header and footer sections.
-    - **Reusability:** The same `CardFlexible` component can be used for many different card layouts just by changing the provided snippets.
+  - **Flexibility:** The consumer provides the exact markup needed for the header and footer directly within the `<CardFlexible>` tags using `{#snippet ...}`.
+  - **Inversion of Control:** The _consumer_, not the card component, controls the content and structure of the header and footer sections.
+  - **Reusability:** The same `CardFlexible` component can be used for many different card layouts just by changing the provided snippets.
 
 ---
 
@@ -35,26 +36,31 @@ This example demonstrates the difference between basic (props-based) and flexibl
 This example contrasts an attempt at reusable data fetching using props with a truly flexible approach using snippets.
 
 **Location:**
+
 - Components: `src/lib/components/patterns/*/FetchData*.svelte`
 - Helper Component: `src/routes/examples/data-fetching/_UserListComponent.svelte` (for basic example)
 - Demo Page: `src/routes/examples/data-fetching/+page.svelte`
 
 ### `FetchDataBasic.svelte` (Basic Composition)
 
-- **Pattern:** Composition via Props (centralized logic, but rigid output).
-- **Implementation:** Centralizes the `fetch` call, loading, and error state management. However, it renders hardcoded UI for loading/error states and requires a specific `displayComponent` prop. This prop must accept the fetched data via a specific contract (a `data` prop).
+- **Pattern:** Composition via Props and Internal Conditional Logic.
+- **Implementation:** Centralizes the `fetch` call, loading, and error state management. Renders hardcoded UI for loading/error states. It takes a `displayType` prop (e.g., `'users'`) and internally imports and conditionally renders a specific component (`UserListComponent`) based on that prop's value.
 - **Demonstrates:**
-    - **Attempted Reusability:** An improvement over duplicating fetch logic entirely.
-    - **Rigidity:** The loading and error UI cannot be easily customized by the consumer. The consumer *must* provide a component conforming to the expected `data` prop signature.
-    - **Type Challenges:** Shows how passing component constructors requires careful type handling or assertions (`displayComponent={UserListComponent as Component<{ data?: unknown }>}`).
-    - **Limited Applicability:** Difficult to reuse if the desired loading/error UI differs or if the display component needs data passed differently.
+  - **Attempted Reusability:** An improvement over duplicating fetch logic entirely.
+  - **Rigidity:**
+    - Loading/error UI cannot be easily customized by the consumer.
+    - Supporting a new display type (e.g., 'posts') requires modifying `FetchDataBasic` to import the new component and add another `{:else if}` block.
+  - **Tight Coupling:** The component is tightly coupled to the specific components it imports (`UserListComponent`, etc.).
+  - **Type Weakness:** Requires awkward type casting (`data as any`) or linter disabling when passing fetched data to the internally rendered component, as `FetchDataBasic` doesn't inherently know the data type matching `UserListComponent`.
+  - **Limited Applicability:** Only works for the predefined `displayType` values it knows about.
 
 ### `FetchDataFlexible.svelte` (Flexible Composition)
 
 - **Pattern:** Composition via Snippets (Render Props pattern).
 - **Implementation:** Centralizes fetch logic but uses required named snippets (`loading`, `error`, `data`) for all UI rendering. The `error` snippet receives the `Error` object, and the `data` snippet receives the fetched data (with generics `<T>` for type safety).
 - **Demonstrates:**
-    - **Full UI Control:** The consumer defines the exact markup for the loading state, the error state (using the error details), and the success state (using the fetched data).
-    - **Type Safety:** Uses Svelte 5 generics (`<T>`) and typed snippets (`Snippet<[error: Error]>`, `Snippet<[data: T]>`) to ensure the data passed to the snippet matches expectations.
-    - **High Reusability:** The same component can be used to fetch and display *any* type of data with completely different UI templates just by changing the snippets and the generic type (`<FetchDataFlexible<User[]>>`, `<FetchDataFlexible<Post[]>>`).
-    - **Inversion of Control:** The fetcher handles *fetching*, the consumer handles *rendering*. 
+  - **Full UI Control:** The consumer defines the exact markup for the loading state, the error state (using the error details), and the success state (using the fetched data).
+  - **Type Safety:** Uses Svelte 5 generics (`<T>`) and typed snippets (`Snippet<[error: Error]>`, `Snippet<[data: T]>`) to ensure the data passed to the snippet matches expectations.
+  - **High Reusability:** The same component can be used to fetch and display *any* type of data with completely different UI templates just by changing the snippets and the generic type (`<FetchDataFlexible<User[]>>`, `<FetchDataFlexible<Post[]>>`).
+  - **Inversion of Control:** The fetcher handles *fetching*, the consumer handles *rendering*.
+  - **Note on Generics Usage:** The demo page (`+page.svelte`) uses `$derived` to reactively select the correctly typed component constructor (`FetchDataFlexible<Post[]>` or `FetchDataFlexible<User[]>`) based on application state, allowing direct rendering (`<TypedFetchData />`) without needing deprecated APIs like `<svelte:component>`.

@@ -1,8 +1,6 @@
 <script lang="ts">
 	import FetchDataBasic from '$lib/components/patterns/basic-composition/FetchDataBasic.svelte';
-	import FetchDataFlexible from '$lib/components/patterns/flexible-composition/FetchDataFlexible.svelte';
-	import UserListComponent from './_UserListComponent.svelte'; // Component for the basic example
-	import type { Component } from 'svelte'; // Import Component for assertion
+	import FetchDataFlexible from '$lib/components/patterns/flexible-composition/FetchDataFlexible.svelte'; // Direct import
 
 	type User = { id: number; name: string; email: string };
 	type Post = { userId: number; id: number; title: string; body: string };
@@ -15,6 +13,9 @@
 	let useErrorUrl = $state(false);
 
 	const flexibleUrl = $derived(useErrorUrl ? errorUrl : showPosts ? postsUrl : usersUrl);
+	const TypedFetchData = $derived(
+		showPosts ? FetchDataFlexible<Post[]> : FetchDataFlexible<User[]>
+	);
 </script>
 
 <div class="page-container">
@@ -42,10 +43,7 @@
 				<code>displayComponent</code> prop (<code>UserListComponent</code> in this case) that knows how
 				to handle the fetched data via a `data` prop.
 			</p>
-			<FetchDataBasic
-				url={usersUrl}
-				displayComponent={UserListComponent as Component<{ data?: unknown }>}
-			/>
+			<FetchDataBasic url={usersUrl} displayType="users" />
 		</div>
 	</section>
 
@@ -58,52 +56,44 @@
 				success states is provided by the consumer using snippets. This makes the component highly
 				reusable for different data types and UI needs.
 			</p>
-			{#if showPosts}
-				<svelte:component this={FetchDataFlexible<Post[]>} url={flexibleUrl}>
-					{#snippet loading()}
-						<p class="loading-state-flexible"><i>⏳ Loading posts... please wait...</i></p>
-					{/snippet}
-					{#snippet error(error)}
-						<div class="error-state-flexible">
-							<strong>🚨 Post Fetch Error!</strong>
-							<pre>{error.message}</pre>
-						</div>
-					{/snippet}
-					{#snippet data(data)}
+			<!-- Render the derived component directly -->
+			<TypedFetchData url={flexibleUrl}>
+				{#snippet loading()}
+					<p class="loading-state-flexible">
+						<i>⏳ Loading {showPosts ? 'posts' : 'users'}... please wait...</i>
+					</p>
+				{/snippet}
+				{#snippet error(error)}
+					<div class="error-state-flexible">
+						<strong>🚨 {showPosts ? 'Post' : 'User'} Fetch Error!</strong>
+						<pre>{error.message}</pre>
+					</div>
+				{/snippet}
+				{#snippet data(data)}
+					{#if showPosts}
+						{@const posts = data as Post[]}
 						<div class="post-list">
 							<h3>Fetched Posts:</h3>
-							{#each data as post (post.id)}
+							{#each posts as post (post.id)}
 								<article>
 									<h4>{post.title}</h4>
 									<p>{post.body}</p>
 								</article>
 							{/each}
 						</div>
-					{/snippet}
-				</svelte:component>
-			{:else}
-				<svelte:component this={FetchDataFlexible<User[]>} url={flexibleUrl}>
-					{#snippet loading()}
-						<p class="loading-state-flexible"><i>⏳ Loading users... please wait...</i></p>
-					{/snippet}
-					{#snippet error(error)}
-						<div class="error-state-flexible">
-							<strong>🚨 User Fetch Error!</strong>
-							<pre>{error.message}</pre>
-						</div>
-					{/snippet}
-					{#snippet data(data)}
+					{:else}
+						{@const users = data as User[]}
 						<div class="user-list-flexible">
 							<h3>Fetched Users:</h3>
 							<ul>
-								{#each data as user (user.id)}
+								{#each users as user (user.id)}
 									<li>{user.name}</li>
 								{/each}
 							</ul>
 						</div>
-					{/snippet}
-				</svelte:component>
-			{/if}
+					{/if}
+				{/snippet}
+			</TypedFetchData>
 		</div>
 	</section>
 </div>
