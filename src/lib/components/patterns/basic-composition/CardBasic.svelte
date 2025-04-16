@@ -33,7 +33,10 @@
 
 	{#if footerComponent}
 		<footer class="card-footer">
-			{footerComponent}
+			<!-- Using svelte:component is necessary here to render the passed Component prop.
+			 Note: Svelte 5 issues a deprecation warning, encouraging snippet-based patterns 
+			 (like in CardFlexible) for better flexibility and type safety where possible. -->
+			<svelte:component this={footerComponent} />
 		</footer>
 	{/if}
 </div>
