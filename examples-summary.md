@@ -64,3 +64,23 @@ This example contrasts an attempt at reusable data fetching using props with a t
   - **High Reusability:** The same component can be used to fetch and display *any* type of data with completely different UI templates just by changing the snippets and the generic type (`<FetchDataFlexible<User[]>>`, `<FetchDataFlexible<Post[]>>`).
   - **Inversion of Control:** The fetcher handles *fetching*, the consumer handles *rendering*.
   - **Note on Generics Usage:** The demo page (`+page.svelte`) uses `$derived` to reactively select the correctly typed component constructor (`FetchDataFlexible<Post[]>` or `FetchDataFlexible<User[]>`) based on application state, allowing direct rendering (`<TypedFetchData />`) without needing deprecated APIs like `<svelte:component>`.
+
+---
+
+## 3. Animation Wrapper Example
+
+This example shows how flexible composition (using the default `children` snippet) can encapsulate behavior, like triggering animations on scroll.
+
+**Location:**
+- Component: `src/lib/components/patterns/flexible-composition/AnimateOnScroll.svelte`
+- Demo Page: `src/routes/examples/animation/+page.svelte`
+
+### `AnimateOnScroll.svelte` (Flexible Composition)
+
+- **Pattern:** Composition via `children` Snippet.
+- **Implementation:** Uses the Intersection Observer API to detect when its root element enters the viewport. It applies a CSS class (`.is-visible`) which triggers a fade-in-up transition defined in its `<style>` block. It renders whatever content is passed via the `children` snippet inside the observed element.
+- **Demonstrates:**
+    - **Behavior Encapsulation:** The complex logic of observing intersection and applying animation styles is hidden within the wrapper.
+    - **Applying Behavior to Arbitrary Content:** The *same* wrapper can be used to animate simple HTML elements (`<p>`, `<img>`) or other Svelte components (`<CardFlexible>`) without any changes to the wrapper or the wrapped content.
+    - **DRY Principle:** Avoids repeating Intersection Observer setup and CSS animation code across multiple components/elements.
+    - **Contrast with Basic Approach:** The alternative (no wrapper) would involve manually adding the Observer logic and animation CSS to every element needing the effect, leading to significant code duplication and mixing behavioral logic with presentation.

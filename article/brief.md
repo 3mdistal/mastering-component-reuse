@@ -98,13 +98,13 @@ This article explores the nuanced spectrum between inheritance and composition i
 
 - **Connect Theory to Practice:** Now that the pattern is understood and type-safe, show _why_ it's valuable.
 - **Abstracting Behavior:**
-  - Your **Animation Wrapper** example: `<AnimateOnScroll><AnythingHere /></AnimateOnScroll>`. The wrapper handles Intersection Observer logic and applies animation to whatever is passed in via the implicit `children` snippet.
+  - **Animation Wrapper** example: `<AnimateOnScroll><AnythingHere /></AnimateOnScroll>`. The wrapper handles Intersection Observer logic and applies animation to whatever is passed in via the implicit `children` snippet.
   - **Data Fetching Wrappers:** `<FetchData url={...}><Loading slot="loading"/> <Error slot="error" let:error/> <Data slot="data" let:data/></FetchData>` (using named slots/snippets with passed data).
-- **Generic Layouts/Shells:** `<DashboardLayout><SidebarContents slot="sidebar"/> <MainContent slot="main"/></DashboardLayout>`.
-- **Design System Components:** `<Card><CardHeader slot="header"/> <CardBody/></Card>`, `<Modal><ModalContent/></Modal>`. The parent provides styling and structure; the consumer provides the specific content (referencing `CardFlexible`).
-- **Building Flexible Libraries:** Emphasize how this allows library authors to create components that are less opinionated about their children, increasing adoption and utility.
-- **DRY Principle:** How this avoids repeating wrapper logic (like animation, layout, data state handling) across different specific content implementations.
-- **Synergy with Modern CSS:** Note how flexible composition pairs well with features like container queries, allowing components to be truly context-agnostic, adapting their internal layout based on the actual space provided by the parent, not just the viewport.
+  - **Generic Layouts/Shells:** `<DashboardLayout><SidebarContents slot="sidebar"/> <MainContent slot="main"/></DashboardLayout>`. (Mention this common pattern, but note that a dedicated code example isn't needed as the concept is similar to the `CardFlexible` example and well-understood from framework layouts like SvelteKit/Next.js).
+  - **Design System Components:** `<Card><CardHeader slot="header"/> <CardBody/></Card>`, `<Modal><ModalContent/></Modal>`. The parent provides styling and structure; the consumer provides the specific content (referencing `CardFlexible`).
+  - **Building Flexible Libraries:** Emphasize how this allows library authors to create components that are less opinionated about their children, increasing adoption and utility.
+  - **DRY Principle:** How this avoids repeating wrapper logic (like animation, layout, data state handling) across different specific content implementations.
+  - **Synergy with Modern CSS:** Note how flexible composition pairs well with features like container queries, allowing components to be truly context-agnostic, adapting their internal layout based on the actual space provided by the parent, not just the viewport.
 
 ### Section 7: Conclusion: Choosing the Right Tool & Embracing Flexibility
 
