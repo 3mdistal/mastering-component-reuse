@@ -64,17 +64,19 @@ This article explores the nuanced spectrum between inheritance and composition i
 
 - **Definition & Analogy:** Define this common pattern: `ComponentA` imports and renders `ComponentB`. `Form` _has-a_ `Button`. This _is_ technically composition.
 - **Mechanism:** `import Button from './Button'; <Button {...props} />`.
-- **Strengths:** Simple, explicit dependency, easy to understand initially, **type safety _via props_** (TypeScript checks if `Button` receives the props it expects).
+- **Strengths:** Simple, explicit dependency, easy to understand initially, **type safety *via props*** (TypeScript checks if `Button` receives the props it expects).
 - **Weaknesses (The Core Argument):**
   - **Compositional Tight Coupling:** `ComponentA` is hardcoded to use that _specific_ `ComponentB` implementation.
   - **Rigidity:** Difficult for the _consumer_ of `ComponentA` to swap out `ComponentB` for `ComponentC` without modifying `ComponentA` or adding complex conditional logic inside it.
   - **Limited Reusability:** `ComponentA` is less reusable because it makes assumptions about its children.
+  - **Example - Card Component:** A `CardBasic` component might accept specific props like `headerText`, `footerTitle`, `footerActionText`. To customize the footer beyond this predefined structure (e.g., add an icon, two buttons), the component itself must be modified to accept even more props, leading to "prop explosion".
+  - **Example - Data Fetching:** A common attempt to improve on duplicating fetch logic is creating a wrapper like `FetchDataBasic`. While it centralizes fetching, passing a required `displayComponent` prop still leads to rigidity. The wrapper dictates the loading/error UI and imposes a strict prop contract (e.g., `data` prop) on the display component, hindering reuse with different UIs or data structures.
   - **This is the "Middle Ground":** Explain why this often feels less flexible than the promise of "composition."
 
 ### Section 4: Pattern 3: Flexible Composition via Slots/Snippets ("Has-A", Advanced)
 
 - **The Leap:** Introduce the concept of patterns designed explicitly for structural flexibility and decoupling (passing components/markup _into_ other components).
-- **Mechanism Overview:** Explain placeholders (parent defines _where_ content goes) and consumer providing the _what_. Mention `<slot>`, React `children`, Vue `slots`, Render Props, and Svelte `{#snippet}` as examples of this concept.
+- **Mechanism Overview:** Explain placeholders (parent defines _where_ content goes) and consumer providing the _what_. Mention `<slot>`, React `children`, Vue `slots`, Render Props, and Svelte `{#snippet}` as examples of this concept. Use `CardFlexible` with its `header` and `footer` snippets as a concrete Svelte example.
 - **Inversion of Control:** Emphasize this key benefit – the consumer controls the specific implementation within the parent's structure.
 - **Analogy:** The empty picture frame vs. the frame with a glued-in picture.
 - **Addressing Confusion:** Acknowledge potential prior confusion with slots (complexity, perceived uselessness, type safety concerns) and promise to clarify their power.
@@ -83,7 +85,7 @@ This article explores the nuanced spectrum between inheritance and composition i
 ### Section 5: Deep Dive: Svelte 5 Snippets - Flexible Composition Made Type-Safe
 
 - **Focus:** Transition to Svelte 5 Snippets as a prime example of modern, flexible, type-safe composition.
-- **Syntax:** Introduce `{#snippet name(params)}...{/snippet}` and `{@render name(args)}`.
+- **Syntax:** Introduce `{#snippet name(params)}...{/snippet}` and `{@render name(args)}`. Refer back to `CardFlexible` and `FetchDataFlexible` snippets.
 - **The Key Insight:** Explain snippets behave like _typed function parameters for markup chunks_.
 - **Analogy:** Compare to "Render Props" pattern – parent passes data down, consumer provides the rendering logic using that data.
 - **Type Safety Mechanism:** Explain `propName: Snippet<[ParamType1, ParamType2]>` in the parent component's props definition. The parent dictates the _contract_ (required parameters and their types) for the snippet.
@@ -102,7 +104,7 @@ This article explores the nuanced spectrum between inheritance and composition i
   - Your **Animation Wrapper** example: `<AnimateOnScroll><AnythingHere /></AnimateOnScroll>`. The wrapper handles Intersection Observer logic and applies animation to whatever is passed in via the implicit `children` snippet.
   - **Data Fetching Wrappers:** `<FetchData url={...}><Loading slot="loading"/> <Error slot="error" let:error/> <Data slot="data" let:data/></FetchData>` (using named slots/snippets with passed data).
 - **Generic Layouts/Shells:** `<DashboardLayout><SidebarContents slot="sidebar"/> <MainContent slot="main"/></DashboardLayout>`.
-- **Design System Components:** `<Card><CardHeader slot="header"/> <CardBody/></Card>`, `<Modal><ModalContent/></Modal>`. The parent provides styling and structure; the consumer provides the specific content.
+- **Design System Components:** `<Card><CardHeader slot="header"/> <CardBody/></Card>`, `<Modal><ModalContent/></Modal>`. The parent provides styling and structure; the consumer provides the specific content (referencing `CardFlexible`).
 - **Building Flexible Libraries:** Emphasize how this allows library authors to create components that are less opinionated about their children, increasing adoption and utility.
 - **DRY Principle:** How this avoids repeating wrapper logic (like animation, layout, data state handling) across different specific content implementations.
 - **Synergy with Modern CSS:** Note how flexible composition pairs well with features like container queries, allowing components to be truly context-agnostic, adapting their internal layout based on the actual space provided by the parent, not just the viewport.
