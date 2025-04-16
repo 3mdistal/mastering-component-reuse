@@ -35,8 +35,8 @@
 
 			<div>
 				<h3 class="example-title">No Header/Footer</h3>
-				<CardBasic padding="large" showBorder={false}>
-					<p>Just some simple content, large padding, no border.</p>
+				<CardBasic>
+					<p>Just some simple content.</p>
 				</CardBasic>
 			</div>
 
@@ -69,7 +69,7 @@
 		<div class="grid-container">
 			<div>
 				<h3 class="example-title">Full Example</h3>
-				<CardFlexible padding="small">
+				<CardFlexible>
 					{#snippet header()}
 						<h3 style="color: blue; font-weight: bold;">{flexibleCardData.header}</h3>
 					{/snippet}
@@ -88,11 +88,8 @@
 
 			<div>
 				<h3 class="example-title">No Header/Footer</h3>
-				<CardFlexible showBorder={false}>
-					<p>
-						Just some simple content, default padding, no border. No header/footer snippets
-						provided.
-					</p>
+				<CardFlexible>
+					<p>Just some simple content. No header/footer snippets provided.</p>
 				</CardFlexible>
 			</div>
 
@@ -108,7 +105,7 @@
 
 			<div>
 				<h3 class="example-title">Inline Footer Markup</h3>
-				<CardFlexible padding="large">
+				<CardFlexible>
 					<p>Putting complex markup or logic in the footer is easy inline using snippets.</p>
 					{#snippet footer()}
 						<!-- This could be its own component. -->

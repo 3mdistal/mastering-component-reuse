@@ -1,6 +1,6 @@
-<!-- src/routes/examples/card/_BasicFooter.svelte -->
-<!-- This component exists solely to be passed as a prop -->
-<!-- to CardBasic to demonstrate that pattern's limitation. -->
+<!-- This component exists solely to be passed as a prop 
+ to CardBasic to demonstrate that pattern's limitation. -->
+
 <div class="basic-footer">
 	<button class="button button-secondary">Cancel</button>
 	<button class="button button-primary">Save</button>

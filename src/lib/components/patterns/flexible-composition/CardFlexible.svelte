@@ -5,24 +5,12 @@
 		children: Snippet;
 		header?: Snippet;
 		footer?: Snippet;
-		padding?: 'small' | 'medium' | 'large';
-		showBorder?: boolean;
 	};
 
-	let { children, header, footer, padding = 'medium', showBorder = true }: Props = $props();
-
-	const paddingClass = $derived(
-		{
-			small: '2px',
-			medium: '4px',
-			large: '6px'
-		}[padding]
-	);
-
-	const borderClass = $derived(showBorder ? 'card-border' : '');
+	let { children, header, footer }: Props = $props();
 </script>
 
-<div class={`card-flexible ${borderClass}`} style={`padding: ${paddingClass};`}>
+<div class={`card-flexible`}>
 	{#if header}
 		<header class="card-header">
 			{@render header()}
@@ -47,12 +35,10 @@
 		gap: 10px;
 		background-color: white;
 		border-radius: 8px;
+		padding: 12px;
 		box-shadow:
 			0 1px 3px 0 rgb(0 0 0 / 0.1),
 			0 1px 2px -1px rgb(0 0 0 / 0.1);
-	}
-	.card-border {
-		border: 1px solid #d1d5db;
 	}
 	.card-header {
 		border-bottom: 1px solid #e5e7eb;
